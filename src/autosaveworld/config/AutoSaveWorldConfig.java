@@ -58,7 +58,7 @@ public class AutoSaveWorldConfig {
     public int                            lfsMaxNumberOfPluginsBackups  = 15;
     public List<String>                   lfsextfolders;
     public List<String>                   lfsbackupexcludefolders;
-    public boolean                        lfsbackupzip                  = false;
+    public boolean                        lfsbackupzip                  = true;
     public long                           lfsbackupzipMSIntervalPerFile = 100;
     // ftp backup
     public boolean                        ftpbackupenabled              = false;
@@ -71,7 +71,7 @@ public class AutoSaveWorldConfig {
     public boolean                        ftpbackuppluginsfolder        = false;
     public List<String>                   ftpbackupexcludefolders;
     public int                            ftpbackupmaxnumberofbackups   = 4;
-    public boolean                        ftpbackupzip                  = true;
+    public boolean                        ftpbackupzip                  = false;
     // script
     public boolean                        scriptbackupenabled           = false;
     public List<String>                   scriptbackupscriptpaths       = new ArrayList<String>();
