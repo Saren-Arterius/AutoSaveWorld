@@ -36,12 +36,15 @@ public class LFSBackupOperations {
     private final boolean       zip;
     private final String        extpath;
     private final List<String>  excludefolders;
+    private long                lfsbackupzipMSIntervalPerFile;
 
-    public LFSBackupOperations(AutoSaveWorld plugin, boolean zip, String extpath, List<String> excludefolders) {
+    public LFSBackupOperations(AutoSaveWorld plugin, boolean zip, String extpath, List<String> excludefolders,
+            long lfsbackupzipMSIntervalPerFile) {
         this.plugin = plugin;
         this.zip = zip;
         this.extpath = extpath;
         this.excludefolders = excludefolders;
+        this.lfsbackupzipMSIntervalPerFile = lfsbackupzipMSIntervalPerFile;
     }
 
     public void startWorldBackup(ExecutorService backupService, final World world, final int maxBackupsCount,
@@ -74,7 +77,7 @@ public class LFSBackupOperations {
                 if (!zip) {
                     BackupFileUtils.copyDirectory(worldfolder, new File(worldBackup), excludefolders);
                 } else {
-                    ZipUtils.zipFolder(worldfolder, new File(worldBackup + ".zip"), excludefolders);
+                    ZipUtils.zipFolder(worldfolder, new File(worldBackup + ".zip"), excludefolders, lfsbackupzipMSIntervalPerFile);
                 }
                 MessageLogger.debug("Backuped world " + world.getWorldFolder().getName());
                 world.setAutoSave(savestatus);
@@ -112,7 +115,7 @@ public class LFSBackupOperations {
                 if (!zip) {
                     BackupFileUtils.copyDirectory(pluginsfolder, new File(pluginsBackup), excludefolders);
                 } else {
-                    ZipUtils.zipFolder(pluginsfolder, new File(pluginsBackup + ".zip"), excludefolders);
+                    ZipUtils.zipFolder(pluginsfolder, new File(pluginsBackup + ".zip"), excludefolders, lfsbackupzipMSIntervalPerFile);
                 }
                 MessageLogger.debug("Backuped plugins");
             }

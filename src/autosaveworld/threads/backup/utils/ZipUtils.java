@@ -33,20 +33,22 @@ import autosaveworld.threads.backup.ExcludeManager;
 
 public class ZipUtils {
 
-    public static void zipFolder(final File srcDir, final File destFile, List<String> excludefolders) {
+    public static void zipFolder(final File srcDir, final File destFile, List<String> excludefolders,
+            long lfsbackupzipMSIntervalPerFile) {
         destFile.getParentFile().mkdirs();
 
         try (OutputStream fos = new FileOutputStream(destFile)) {
-            ZipUtils.zipFolder(srcDir, fos, excludefolders);
+            ZipUtils.zipFolder(srcDir, fos, excludefolders, lfsbackupzipMSIntervalPerFile);
         } catch (final IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void zipFolder(final File srcDir, final OutputStream outputStream, List<String> excludefolders) {
+    public static void zipFolder(final File srcDir, final OutputStream outputStream, List<String> excludefolders,
+            long lfsbackupzipMSIntervalPerFile) {
         try (BufferedOutputStream bufOutStream = new BufferedOutputStream(outputStream)) {
             try (ZipOutputStream zipOutStream = new ZipOutputStream(bufOutStream)) {
-                ZipUtils.zipDir(excludefolders, zipOutStream, srcDir, "");
+                ZipUtils.zipDir(excludefolders, zipOutStream, srcDir, "", lfsbackupzipMSIntervalPerFile);
             }
         } catch (final IOException e) {
             e.printStackTrace();
@@ -54,7 +56,7 @@ public class ZipUtils {
     }
 
     private static void zipDir(List<String> excludefolders, ZipOutputStream zipOutStream, final File srcDir,
-            String currentDir) throws IOException {
+            String currentDir, long lfsbackupzipMSIntervalPerFile) throws IOException {
         final File zipDir = new File(srcDir, currentDir);
 
         for (final String child: zipDir.list()) {
@@ -63,9 +65,15 @@ public class ZipUtils {
             if (srcFile.isDirectory()) {
                 if (!ExcludeManager.isFolderExcluded(excludefolders, srcDir.getName() + File.separator + currentDir
                         + child)) {
-                    ZipUtils.zipDir(excludefolders, zipOutStream, srcDir, currentDir + child + File.separator);
+                    ZipUtils.zipDir(excludefolders, zipOutStream, srcDir, currentDir + child + File.separator,
+                            lfsbackupzipMSIntervalPerFile);
                 }
             } else {
+                try {
+                    Thread.sleep(lfsbackupzipMSIntervalPerFile);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 ZipUtils.zipFile(zipOutStream, srcFile, srcDir.getName() + File.separator + currentDir + child);
             }
         }

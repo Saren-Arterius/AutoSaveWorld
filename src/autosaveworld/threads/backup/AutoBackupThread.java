@@ -98,6 +98,7 @@ public class AutoBackupThread extends Thread {
                 if (config.noBackupIfMoreThanPlayers != -1
                         && config.noBackupIfMoreThanPlayers < plugin.getServer().getOnlinePlayers().length) {
                     MessageLogger.debug("Too many players, don't start backup.");
+                    command = false;
                     continue;
                 }
                 plugin.lock.lock();

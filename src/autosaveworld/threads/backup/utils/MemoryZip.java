@@ -16,7 +16,7 @@ public class MemoryZip {
         executor.submit(new Runnable() {
             @Override
             public void run() {
-                ZipUtils.zipFolder(inputDir, mz.getOutputStream(), excludefolders);
+                ZipUtils.zipFolder(inputDir, mz.getOutputStream(), excludefolders, 0);
                 mz.putStreamEndSignal();
             }
         });

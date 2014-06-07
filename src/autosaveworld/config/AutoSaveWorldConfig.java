@@ -59,6 +59,7 @@ public class AutoSaveWorldConfig {
     public List<String>                   lfsextfolders;
     public List<String>                   lfsbackupexcludefolders;
     public boolean                        lfsbackupzip                  = false;
+    public long                           lfsbackupzipMSIntervalPerFile = 100;
     // ftp backup
     public boolean                        ftpbackupenabled              = false;
     public String                         ftphostname                   = "127.0.0.1";
@@ -70,7 +71,7 @@ public class AutoSaveWorldConfig {
     public boolean                        ftpbackuppluginsfolder        = false;
     public List<String>                   ftpbackupexcludefolders;
     public int                            ftpbackupmaxnumberofbackups   = 4;
-    public boolean                        ftpbackupzip                  = false;
+    public boolean                        ftpbackupzip                  = true;
     // script
     public boolean                        scriptbackupenabled           = false;
     public List<String>                   scriptbackupscriptpaths       = new ArrayList<String>();
@@ -157,6 +158,7 @@ public class AutoSaveWorldConfig {
         lfsbackuppluginsfolder = config.getBoolean("backup.localfs.pluginsfolder", lfsbackuppluginsfolder);
         lfsbackupexcludefolders = config.getStringList("backup.localfs.excludefolders");
         lfsbackupzip = config.getBoolean("backup.localfs.zip", lfsbackupzip);
+        lfsbackupzipMSIntervalPerFile = config.getLong("backup.localfs.zipMSIntervalPerFile", lfsbackupzipMSIntervalPerFile);
         lfsbackupWorldsList = config.getStringList("backup.localfs.worlds");
         if (lfsbackupWorldsList.size() == 0) {
             lfsbackupWorldsList.add("*");
@@ -286,6 +288,7 @@ public class AutoSaveWorldConfig {
         config.set("backup.localfs.excludefolders", lfsbackupexcludefolders);
         config.set("backup.localfs.destinationfolders", lfsextfolders);
         config.set("backup.localfs.zip", lfsbackupzip);
+        config.set("backup.localfs.zipMSIntervalPerFile", lfsbackupzipMSIntervalPerFile);
         // ftp
         config.set("backup.ftp.enabled", ftpbackupenabled);
         config.set("backup.ftp.hostname", ftphostname);

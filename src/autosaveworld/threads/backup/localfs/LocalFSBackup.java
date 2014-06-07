@@ -44,7 +44,7 @@ public class LocalFSBackup {
 
             // init backup operations class
             final LFSBackupOperations bo = new LFSBackupOperations(plugin, config.lfsbackupzip, extpath,
-                    config.lfsbackupexcludefolders);
+                    config.lfsbackupexcludefolders, config.lfsbackupzipMSIntervalPerFile);
 
             // create executor
             final ExecutorService backupService = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime()
