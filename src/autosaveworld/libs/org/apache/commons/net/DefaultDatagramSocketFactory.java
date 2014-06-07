@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,41 +22,44 @@ import java.net.SocketException;
 /***
  * DefaultDatagramSocketFactory implements the DatagramSocketFactory
  * interface by simply wrapping the java.net.DatagramSocket
- * constructors.  It is the default DatagramSocketFactory used by
+ * constructors. It is the default DatagramSocketFactory used by
  * {@link autosaveworld.libs.org.apache.commons.net.DatagramSocketClient}
- *  implementations.
+ * implementations.
  * <p>
  * <p>
+ * 
  * @see DatagramSocketFactory
  * @see DatagramSocketClient
  * @see DatagramSocketClient#setDatagramSocketFactory
  ***/
 
-public class DefaultDatagramSocketFactory implements DatagramSocketFactory
-{
+public class DefaultDatagramSocketFactory implements DatagramSocketFactory {
 
     /***
      * Creates a DatagramSocket on the local host at the first available port.
      * <p>
-     * @exception SocketException If the socket could not be created.
+     * 
+     * @exception SocketException
+     *                If the socket could not be created.
      ***/
-//    @Override
+    // @Override
     @Override
-	public DatagramSocket createDatagramSocket() throws SocketException
-    {
+    public DatagramSocket createDatagramSocket() throws SocketException {
         return new DatagramSocket();
     }
 
     /***
      * Creates a DatagramSocket on the local host at a specified port.
      * <p>
-     * @param port The port to use for the socket.
-     * @exception SocketException If the socket could not be created.
+     * 
+     * @param port
+     *            The port to use for the socket.
+     * @exception SocketException
+     *                If the socket could not be created.
      ***/
-//    @Override
+    // @Override
     @Override
-	public DatagramSocket createDatagramSocket(int port) throws SocketException
-    {
+    public DatagramSocket createDatagramSocket(int port) throws SocketException {
         return new DatagramSocket(port);
     }
 
@@ -66,15 +67,17 @@ public class DefaultDatagramSocketFactory implements DatagramSocketFactory
      * Creates a DatagramSocket at the specified address on the local host
      * at a specified port.
      * <p>
-     * @param port The port to use for the socket.
-     * @param laddr  The local address to use.
-     * @exception SocketException If the socket could not be created.
+     * 
+     * @param port
+     *            The port to use for the socket.
+     * @param laddr
+     *            The local address to use.
+     * @exception SocketException
+     *                If the socket could not be created.
      ***/
-//    @Override
+    // @Override
     @Override
-	public DatagramSocket createDatagramSocket(int port, InetAddress laddr)
-    throws SocketException
-    {
+    public DatagramSocket createDatagramSocket(int port, InetAddress laddr) throws SocketException {
         return new DatagramSocket(port, laddr);
     }
 }

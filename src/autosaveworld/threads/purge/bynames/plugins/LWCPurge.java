@@ -3,16 +3,17 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 3
  * of the License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
+ * 
  */
 
 package autosaveworld.threads.purge.bynames.plugins;
@@ -35,60 +36,61 @@ import com.griefcraft.model.Protection;
 
 public class LWCPurge {
 
-	public void doLWCPurgeTask(ActivePlayersList pacheck, boolean delblocks) {
+    public void doLWCPurgeTask(ActivePlayersList pacheck, boolean delblocks) {
 
-		MessageLogger.debug("LWC purge started");
+        MessageLogger.debug("LWC purge started");
 
-		LWCPlugin lwc = (LWCPlugin) Bukkit.getPluginManager().getPlugin("LWC");
+        final LWCPlugin lwc = (LWCPlugin) Bukkit.getPluginManager().getPlugin("LWC");
 
-		int deleted = 0;
+        int deleted = 0;
 
-		//we will check LWC database and remove protections that belongs to away player
-		for (final Protection pr : lwc.getLWC().getPhysicalDatabase().loadProtections()) {
-			if (!pacheck.isActiveCS(pr.getOwner())) {
-				//add protected to delete batch
-				prtodel.add(pr);
-				//delete protections if maximum batch size reached
-				if (prtodel.size() == 80) {
-					flushBatch(lwc, delblocks);
-				}
-				//count deleted protections
-				deleted += 1;
-			}
-		}
-		//flush the rest of the batch;
-		flushBatch(lwc, delblocks);
+        // we will check LWC database and remove protections that belongs to
+        // away player
+        for (final Protection pr: lwc.getLWC().getPhysicalDatabase().loadProtections()) {
+            if (!pacheck.isActiveCS(pr.getOwner())) {
+                // add protected to delete batch
+                prtodel.add(pr);
+                // delete protections if maximum batch size reached
+                if (prtodel.size() == 80) {
+                    flushBatch(lwc, delblocks);
+                }
+                // count deleted protections
+                deleted += 1;
+            }
+        }
+        // flush the rest of the batch;
+        flushBatch(lwc, delblocks);
 
-		MessageLogger.debug("LWC purge finished, deleted "+ deleted+" inactive protections");
-	}
+        MessageLogger.debug("LWC purge finished, deleted " + deleted + " inactive protections");
+    }
 
-	private ArrayList<Protection> prtodel = new ArrayList<Protection>(100);
-	private void flushBatch(final LWCPlugin lwc, final boolean delblocks) {
-		Runnable rempr = new Runnable() {
-			@Override
-			public void run() {
-				for (Protection pr : prtodel) {
-					//delete block
-					if (delblocks) {
-						MessageLogger.debug("Removing protected block for inactive player "+pr.getOwner());
-						Block block = pr.getBlock();
-						BlockState bs = block.getState();
-						if (bs instanceof Chest) {
-							((Chest) bs).getBlockInventory().clear();
-						} else
-						if (bs instanceof DoubleChest) {
-							((DoubleChest) bs).getInventory().clear();
-						}
-						block.setType(Material.AIR);
-					}
-					//delete protection
-					MessageLogger.debug("Removing protection for inactive player "+pr.getOwner());
-					lwc.getLWC().getPhysicalDatabase().removeProtection(pr.getId());
-				}
-				prtodel.clear();
-			}
-		};
-		SchedulerUtils.callSyncTaskAndWait(rempr);
-	}
+    private final ArrayList<Protection> prtodel = new ArrayList<Protection>(100);
+
+    private void flushBatch(final LWCPlugin lwc, final boolean delblocks) {
+        final Runnable rempr = new Runnable() {
+            @Override
+            public void run() {
+                for (final Protection pr: prtodel) {
+                    // delete block
+                    if (delblocks) {
+                        MessageLogger.debug("Removing protected block for inactive player " + pr.getOwner());
+                        final Block block = pr.getBlock();
+                        final BlockState bs = block.getState();
+                        if (bs instanceof Chest) {
+                            ((Chest) bs).getBlockInventory().clear();
+                        } else if (bs instanceof DoubleChest) {
+                            ((DoubleChest) bs).getInventory().clear();
+                        }
+                        block.setType(Material.AIR);
+                    }
+                    // delete protection
+                    MessageLogger.debug("Removing protection for inactive player " + pr.getOwner());
+                    lwc.getLWC().getPhysicalDatabase().removeProtection(pr.getId());
+                }
+                prtodel.clear();
+            }
+        };
+        SchedulerUtils.callSyncTaskAndWait(rempr);
+    }
 
 }

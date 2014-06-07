@@ -18,53 +18,56 @@ import com.bekvon.bukkit.residence.protection.CuboidArea;
 
 public class ResidencePurge {
 
-	public void doResidencePurgeTask(ActivePlayersList pacheck, final boolean regenres) {
+    public void doResidencePurgeTask(ActivePlayersList pacheck, final boolean regenres) {
 
-		MessageLogger.debug("Residence purge started");
+        MessageLogger.debug("Residence purge started");
 
-		int deletedres = 0;
+        int deletedres = 0;
 
-		List<String> reslist = new ArrayList<String>(Arrays.asList(Residence.getResidenceManager().getResidenceList()));
-		boolean wepresent = (Bukkit.getPluginManager().getPlugin("WorldEdit") != null);
+        final List<String> reslist = new ArrayList<String>(Arrays.asList(Residence.getResidenceManager()
+                .getResidenceList()));
+        final boolean wepresent = (Bukkit.getPluginManager().getPlugin("WorldEdit") != null);
 
-		//search for residences with inactive players
-		for (final String res : reslist) {
-			MessageLogger.debug("Checking residence " + res);
-			final ClaimedResidence cres = Residence.getResidenceManager().getByName(res);
-			if (!pacheck.isActiveCS(cres.getOwner())) {
-				MessageLogger.debug("Owner of residence "+res+" is inactive. Purging residence");
+        // search for residences with inactive players
+        for (final String res: reslist) {
+            MessageLogger.debug("Checking residence " + res);
+            final ClaimedResidence cres = Residence.getResidenceManager().getByName(res);
+            if (!pacheck.isActiveCS(cres.getOwner())) {
+                MessageLogger.debug("Owner of residence " + res + " is inactive. Purging residence");
 
-				//regen residence areas if needed
-				if (regenres && wepresent) {
-					for (final CuboidArea ca : cres.getAreaArray()) {
-						Runnable caregen =  new Runnable() {
-							Vector minpoint = ca.getLowLoc().toVector();
-							Vector maxpoint = ca.getHighLoc().toVector();
-							@Override
-							public void run() {
-								MessageLogger.debug("Regenerating residence "+res+" cuboid area");
-								WorldEditRegeneration.regenerateRegion(Bukkit.getWorld(cres.getWorld()), minpoint, maxpoint);
-							}
-						};
-						SchedulerUtils.callSyncTaskAndWait(caregen);
-					}
-					//delete residence from db
-					MessageLogger.debug("Deleting residence "+res);
-					Runnable delres = new Runnable() {
-						@Override
-						public void run() {
-							cres.remove();
-							Residence.getResidenceManager().save();
-						}
-					};
-					SchedulerUtils.callSyncTaskAndWait(delres);
+                // regen residence areas if needed
+                if (regenres && wepresent) {
+                    for (final CuboidArea ca: cres.getAreaArray()) {
+                        final Runnable caregen = new Runnable() {
+                            Vector minpoint = ca.getLowLoc().toVector();
+                            Vector maxpoint = ca.getHighLoc().toVector();
 
-					deletedres += 1;
-				}
-			}
-		}
+                            @Override
+                            public void run() {
+                                MessageLogger.debug("Regenerating residence " + res + " cuboid area");
+                                WorldEditRegeneration.regenerateRegion(Bukkit.getWorld(cres.getWorld()), minpoint,
+                                        maxpoint);
+                            }
+                        };
+                        SchedulerUtils.callSyncTaskAndWait(caregen);
+                    }
+                    // delete residence from db
+                    MessageLogger.debug("Deleting residence " + res);
+                    final Runnable delres = new Runnable() {
+                        @Override
+                        public void run() {
+                            cres.remove();
+                            Residence.getResidenceManager().save();
+                        }
+                    };
+                    SchedulerUtils.callSyncTaskAndWait(delres);
 
-		MessageLogger.debug("Residence purge finished, deleted "+ deletedres+" inactive residences");
-	}
+                    deletedres += 1;
+                }
+            }
+        }
+
+        MessageLogger.debug("Residence purge finished, deleted " + deletedres + " inactive residences");
+    }
 
 }

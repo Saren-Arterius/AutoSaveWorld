@@ -3,16 +3,17 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 3
  * of the License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
+ * 
  */
 
 package autosaveworld.threads.worldregen.wg;
@@ -35,28 +36,33 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class WorldGuardCopy {
 
-	private World wtoregen;
-	public WorldGuardCopy(String worldtoregen) {
-		this.wtoregen = Bukkit.getWorld(worldtoregen);
-	}
+    private final World wtoregen;
 
-	public void copyAllToSchematics() {
-		MessageLogger.debug("Saving WG regions to schematics");
+    public WorldGuardCopy(String worldtoregen) {
+        wtoregen = Bukkit.getWorld(worldtoregen);
+    }
 
-		WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit.getPluginManager().getPlugin("WorldGuard");
+    public void copyAllToSchematics() {
+        MessageLogger.debug("Saving WG regions to schematics");
 
-		new File(GlobalConstants.getWGTempFolder()).mkdirs();
+        final WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit.getPluginManager().getPlugin("WorldGuard");
 
-		final RegionManager m = wg.getRegionManager(wtoregen);
-		for (final ProtectedRegion rg : m.getRegions().values()) {
-			//ignore global region
-			if (rg.getId().equalsIgnoreCase("__global__")) {continue;}
-			//save
-			MessageLogger.debug("Saving WG Region "+rg.getId()+" to schematic");
-			SchematicToSave schematicdata = new SchematicToSave(GlobalConstants.getWGTempFolder()+rg.getId(), rg.getMinimumPoint(), rg.getMaximumPoint());
-			SchematicOperations.saveToSchematic(wtoregen, new LinkedList<SchematicToSave>(Arrays.asList(schematicdata)));
-			MessageLogger.debug("WG Region "+rg.getId()+" saved");
-		}
-	}
+        new File(GlobalConstants.getWGTempFolder()).mkdirs();
+
+        final RegionManager m = wg.getRegionManager(wtoregen);
+        for (final ProtectedRegion rg: m.getRegions().values()) {
+            // ignore global region
+            if (rg.getId().equalsIgnoreCase("__global__")) {
+                continue;
+            }
+            // save
+            MessageLogger.debug("Saving WG Region " + rg.getId() + " to schematic");
+            final SchematicToSave schematicdata = new SchematicToSave(GlobalConstants.getWGTempFolder() + rg.getId(),
+                    rg.getMinimumPoint(), rg.getMaximumPoint());
+            SchematicOperations
+                    .saveToSchematic(wtoregen, new LinkedList<SchematicToSave>(Arrays.asList(schematicdata)));
+            MessageLogger.debug("WG Region " + rg.getId() + " saved");
+        }
+    }
 
 }

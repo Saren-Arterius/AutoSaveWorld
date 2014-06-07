@@ -3,16 +3,17 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 3
  * of the License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
+ * 
  */
 
 package autosaveworld.threads.worldregen;
@@ -36,107 +37,113 @@ import autosaveworld.utils.FileUtils;
 
 public class WorldRegenPasteThread extends Thread {
 
-	private AutoSaveWorld plugin = null;
-	private AutoSaveWorldConfig config;
-	private AutoSaveWorldConfigMSG configmsg;
-	public WorldRegenPasteThread(AutoSaveWorld plugin, AutoSaveWorldConfig config, AutoSaveWorldConfigMSG configmsg) {
-		this.plugin = plugin;
-		this.config = config;
-		this.configmsg = configmsg;
-	};
+    private AutoSaveWorld                plugin = null;
+    private final AutoSaveWorldConfig    config;
+    private final AutoSaveWorldConfigMSG configmsg;
 
-	private boolean paste = false;
-	public void checkIfShouldPaste() {
-		File check = new File(GlobalConstants.getWorldnameFile());
-		if (check.exists()) {
-			paste = true;
-		}
-	}
+    public WorldRegenPasteThread(AutoSaveWorld plugin, AutoSaveWorldConfig config, AutoSaveWorldConfigMSG configmsg) {
+        this.plugin = plugin;
+        this.config = config;
+        this.configmsg = configmsg;
+    };
 
-	public void stopThread() {
-	}
+    private boolean paste = false;
 
-	@Override
-	public void run() {
+    public void checkIfShouldPaste() {
+        final File check = new File(GlobalConstants.getWorldnameFile());
+        if (check.exists()) {
+            paste = true;
+        }
+    }
 
-		Thread.currentThread().setName("AutoSaveWorld WorldRegenPaste Thread");
+    public void stopThread() {
+    }
 
-		//do not do anything if we are not regenerating world
-		if (!paste) {return;}
+    @Override
+    public void run() {
 
-		try {
-			doWorldPaste();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        Thread.currentThread().setName("AutoSaveWorld WorldRegenPaste Thread");
 
-	}
+        // do not do anything if we are not regenerating world
+        if (!paste) {
+            return;
+        }
 
-	private void doWorldPaste() throws InterruptedException {
-		//deny players from join
-		Bukkit.getPluginManager().registerEvents(new AntiJoinListener(configmsg), plugin);
+        try {
+            doWorldPaste();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
 
-		//load config
-		FileConfiguration cfg = YamlConfiguration.loadConfiguration(new File(GlobalConstants.getWorldnameFile()));
-		String worldtopasteto = cfg.getString("wname");
+    }
 
-		//wait for server to load
-		int ltask = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-			@Override
-			public void run() {
-			}
-		});
-		while (Bukkit.getScheduler().isCurrentlyRunning(ltask) || Bukkit.getScheduler().isQueued(ltask)) {
-			Thread.sleep(1000);
-		}
+    private void doWorldPaste() throws InterruptedException {
+        // deny players from join
+        Bukkit.getPluginManager().registerEvents(new AntiJoinListener(configmsg), plugin);
 
-		//check for worldedit
-		if (Bukkit.getPluginManager().getPlugin("WorldEdit") == null) {
-			MessageLogger.broadcast("WorldEdit not found, can't place schematics back, please install WorldEdit and restart server",true);
-			return;
-		}
+        // load config
+        final FileConfiguration cfg = YamlConfiguration.loadConfiguration(new File(GlobalConstants.getWorldnameFile()));
+        final String worldtopasteto = cfg.getString("wname");
 
-		MessageLogger.debug("Restoring buildings");
+        // wait for server to load
+        final int ltask = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+            }
+        });
+        while (Bukkit.getScheduler().isCurrentlyRunning(ltask) || Bukkit.getScheduler().isQueued(ltask)) {
+            Thread.sleep(1000);
+        }
 
-		// paste WG buildings
-		if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && config.worldregensavewg) {
-			new WorldGuardPaste(worldtopasteto).pasteAllFromSchematics();
-		}
+        // check for worldedit
+        if (Bukkit.getPluginManager().getPlugin("WorldEdit") == null) {
+            MessageLogger.broadcast(
+                    "WorldEdit not found, can't place schematics back, please install WorldEdit and restart server",
+                    true);
+            return;
+        }
 
-		//paste Factions buildings
-		if (Bukkit.getPluginManager().getPlugin("Factions") != null && config.worldregensavefactions) {
-			new FactionsPaste(worldtopasteto).pasteAllFromSchematics();
-		}
+        MessageLogger.debug("Restoring buildings");
 
-		//paste GriefPrevention claims
-		if (Bukkit.getPluginManager().getPlugin("GriefPrevention") != null && config.worldregensavegp) {
-			new GPPaste(worldtopasteto).pasteAllFromSchematics();
-		}
+        // paste WG buildings
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && config.worldregensavewg) {
+            new WorldGuardPaste(worldtopasteto).pasteAllFromSchematics();
+        }
 
-		//paste Towny towns
-		if (Bukkit.getPluginManager().getPlugin("Towny") != null && config.worldregensavetowny) {
-			new TownyPaste(worldtopasteto).pasteAllFromSchematics();
-		}
+        // paste Factions buildings
+        if (Bukkit.getPluginManager().getPlugin("Factions") != null && config.worldregensavefactions) {
+            new FactionsPaste(worldtopasteto).pasteAllFromSchematics();
+        }
 
-		//clear temp folder
-		MessageLogger.debug("Cleaning temp folders");
+        // paste GriefPrevention claims
+        if (Bukkit.getPluginManager().getPlugin("GriefPrevention") != null && config.worldregensavegp) {
+            new GPPaste(worldtopasteto).pasteAllFromSchematics();
+        }
 
-		FileUtils.deleteDirectory(new File(GlobalConstants.getWGTempFolder()));
-		FileUtils.deleteDirectory(new File(GlobalConstants.getFactionsTempFolder()));
-		FileUtils.deleteDirectory(new File(GlobalConstants.getGPTempFolder()));
-		FileUtils.deleteDirectory(new File(GlobalConstants.getTownyTempFolder()));
-		new File(GlobalConstants.getWorldnameFile()).delete();
-		new File(GlobalConstants.getWorldRegenTempFolder()).delete();
+        // paste Towny towns
+        if (Bukkit.getPluginManager().getPlugin("Towny") != null && config.worldregensavetowny) {
+            new TownyPaste(worldtopasteto).pasteAllFromSchematics();
+        }
 
-		MessageLogger.debug("Restore finished");
+        // clear temp folder
+        MessageLogger.debug("Cleaning temp folders");
 
-		//save server, just in case
-		MessageLogger.debug("Saving server");
-		plugin.saveThread.performSave();
+        FileUtils.deleteDirectory(new File(GlobalConstants.getWGTempFolder()));
+        FileUtils.deleteDirectory(new File(GlobalConstants.getFactionsTempFolder()));
+        FileUtils.deleteDirectory(new File(GlobalConstants.getGPTempFolder()));
+        FileUtils.deleteDirectory(new File(GlobalConstants.getTownyTempFolder()));
+        new File(GlobalConstants.getWorldnameFile()).delete();
+        new File(GlobalConstants.getWorldRegenTempFolder()).delete();
 
-		//restart
-		MessageLogger.debug("Restarting server");
-		plugin.autorestartThread.startrestart(true);
-	}
+        MessageLogger.debug("Restore finished");
+
+        // save server, just in case
+        MessageLogger.debug("Saving server");
+        plugin.saveThread.performSave();
+
+        // restart
+        MessageLogger.debug("Restarting server");
+        plugin.autorestartThread.startrestart(true);
+    }
 
 }

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,8 +24,7 @@ import java.net.SocketException;
  * programmer to control the creation of datagram sockets and
  * provide his own DatagramSocket implementations for use by all
  * classes derived from
- * {@link autosaveworld.libs.org.apache.commons.net.DatagramSocketClient}
- * .
+ * {@link autosaveworld.libs.org.apache.commons.net.DatagramSocketClient} .
  * This allows you to provide your own DatagramSocket implementations and
  * to perform security checks or browser capability requests before
  * creating a DatagramSocket.
@@ -35,21 +32,25 @@ import java.net.SocketException;
  * <p>
  ***/
 
-public interface DatagramSocketFactory
-{
+public interface DatagramSocketFactory {
 
     /***
      * Creates a DatagramSocket on the local host at the first available port.
      * <p>
-     * @exception SocketException If the socket could not be created.
+     * 
+     * @exception SocketException
+     *                If the socket could not be created.
      ***/
     public DatagramSocket createDatagramSocket() throws SocketException;
 
     /***
      * Creates a DatagramSocket on the local host at a specified port.
      * <p>
-     * @param port The port to use for the socket.
-     * @exception SocketException If the socket could not be created.
+     * 
+     * @param port
+     *            The port to use for the socket.
+     * @exception SocketException
+     *                If the socket could not be created.
      ***/
     public DatagramSocket createDatagramSocket(int port) throws SocketException;
 
@@ -57,10 +58,13 @@ public interface DatagramSocketFactory
      * Creates a DatagramSocket at the specified address on the local host
      * at a specified port.
      * <p>
-     * @param port The port to use for the socket.
-     * @param laddr  The local address to use.
-     * @exception SocketException If the socket could not be created.
+     * 
+     * @param port
+     *            The port to use for the socket.
+     * @param laddr
+     *            The local address to use.
+     * @exception SocketException
+     *                If the socket could not be created.
      ***/
-    public DatagramSocket createDatagramSocket(int port, InetAddress laddr)
-    throws SocketException;
+    public DatagramSocket createDatagramSocket(int port, InetAddress laddr) throws SocketException;
 }

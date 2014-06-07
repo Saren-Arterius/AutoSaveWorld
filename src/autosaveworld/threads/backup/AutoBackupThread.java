@@ -35,9 +35,9 @@ import autosaveworld.threads.backup.script.ScriptBackup;
 
 public class AutoBackupThread extends Thread {
 
-    private AutoSaveWorld          plugin = null;
-    private AutoSaveWorldConfig    config;
-    private AutoSaveWorldConfigMSG configmsg;
+    private AutoSaveWorld                plugin = null;
+    private final AutoSaveWorldConfig    config;
+    private final AutoSaveWorldConfigMSG configmsg;
 
     public AutoBackupThread(AutoSaveWorld plugin, AutoSaveWorldConfig config, AutoSaveWorldConfigMSG configmsg) {
         this.plugin = plugin;
@@ -48,11 +48,11 @@ public class AutoBackupThread extends Thread {
     public void stopThread() {
         // save counter on disable
         if (config.backupEnabled) {
-            FileConfiguration config = new YamlConfiguration();
+            final FileConfiguration config = new YamlConfiguration();
             config.set("counter", counter);
             try {
                 config.save(new File(GlobalConstants.getBackupIntervalPreservePath()));
-            } catch (IOException e) {}
+            } catch (final IOException e) {}
         }
         // stop
         run = false;
@@ -75,8 +75,8 @@ public class AutoBackupThread extends Thread {
 
         // load counter on enable
         if (config.backupEnabled) {
-            File preservefile = new File(GlobalConstants.getBackupIntervalPreservePath());
-            FileConfiguration config = YamlConfiguration.loadConfiguration(preservefile);
+            final File preservefile = new File(GlobalConstants.getBackupIntervalPreservePath());
+            final FileConfiguration config = YamlConfiguration.loadConfiguration(preservefile);
             counter = config.getInt("counter", 0);
             preservefile.delete();
         }
@@ -89,7 +89,7 @@ public class AutoBackupThread extends Thread {
                 }
                 try {
                     Thread.sleep(1000);
-                } catch (InterruptedException e) {}
+                } catch (final InterruptedException e) {}
             }
 
             counter = 0;
@@ -103,7 +103,7 @@ public class AutoBackupThread extends Thread {
                 plugin.lock.lock();
                 try {
                     performBackup();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                 }
                 plugin.lock.unlock();
@@ -122,7 +122,7 @@ public class AutoBackupThread extends Thread {
             plugin.saveThread.performSave();
         }
 
-        long timestart = System.currentTimeMillis();
+        final long timestart = System.currentTimeMillis();
 
         MessageLogger.broadcast(configmsg.messageBackupBroadcastPre, config.backupBroadcast);
 
